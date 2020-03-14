@@ -1,15 +1,14 @@
-import scrapy
-from scrapy import signals
 import json
 import re
+
+import scrapy
+from scrapy import signals
 
 
 class URL_Crawler(scrapy.Spider):
     name = 'url_crawler'
     start_urls = ['http://brickset.com/sets/year-2016']
     __urls = {}
-
-
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -20,13 +19,14 @@ class URL_Crawler(scrapy.Spider):
 
     def spider_closed(self, spider):
         spider.logger.info('Crawling acabado guardando en archivo')
-        urls = set(self.getDomain(link) for link in self.__urls.keys())
-
         filtered_urls = {}
+
+        urls = set(self.__urls.keys())  # set(self.getDomain(link) for link in self.__urls.keys())
+
         for k, v in self.__urls.items():
-            intenseccion = urls.intersection(v)
-            if len(intenseccion) != 0:
-                filtered_urls[self.getDomain(k)] = list(intenseccion)
+            intenseccion = v.intersection(urls)
+            # if len(intenseccion) != 0:
+            filtered_urls[k] = list(intenseccion)
 
         with open(self.output + '/urls.json', 'w') as f:
             json.dump(filtered_urls, f)
@@ -35,12 +35,12 @@ class URL_Crawler(scrapy.Spider):
         PAGE_SELECTOR = "//a/@href"
         URL_SELECTOR = r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
 
-        if len(self.__urls) < self.max_size and response.url not in self.__urls:
+        if len(self.__urls) < self.max_size and self.getDomain(response.url) not in self.__urls:
             links = response.xpath(PAGE_SELECTOR).re(URL_SELECTOR)
 
             if len(links) != 0:
                 filtered_links = set(self.getDomain(link) for link in links)
-                self.__urls[response.url] = filtered_links
+                self.__urls[self.getDomain(response.url)] = filtered_links
                 # links = list(links)
 
                 for link in links:
