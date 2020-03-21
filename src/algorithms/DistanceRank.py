@@ -12,7 +12,7 @@ class DistanceRank:
         self.__O = matrix.sum(axis=1).transpose().tolist()[0]
         self.__matrix = matrix.transpose()
 
-    def calculateRank(self, epsilon=10, gamma=1, betta=0.1):
+    def calculateRank(self, epsilon=0.00001, gamma=1, betta=0.1):
         size = len(self.__O)
 
         Dn = np.full(size, size + 1)
