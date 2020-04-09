@@ -1,4 +1,3 @@
-import collections
 import time
 
 import scipy
@@ -28,4 +27,5 @@ if __name__ == '__main__':
     print('tiempo preprocesamiento: ', inicio_calculo - fin_carga)
     print('tiempo calculo: ', fin_calculo - inicio_calculo)
 
-    print(collections.Counter(v))
+    # print(collections.Counter(v))
+    print(v[0:100])
