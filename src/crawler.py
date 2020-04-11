@@ -53,7 +53,7 @@ class URL_Crawler(scrapy.Spider):
         urls = limpiarUrls(self.__urls)
         urls2int = {}
         carga = Bar('Crawling ', max=len(urls.items()))
-        spider.logger.info('Crawling, generando matriz')
+        spider.logger.info('\nCrawling, generando matriz:')
         for domain, links in urls.items():
             if domain not in urls2int:
                 urls2int[domain] = len(urls2int)
@@ -68,7 +68,6 @@ class URL_Crawler(scrapy.Spider):
                 matrix[i, j] = 1
 
             carga.next()
-            self.logger.info(str(carga.percent) + "% generado")
 
         self.__bar.finish()
         spider.logger.info('Crawling, guardando matriz')
@@ -80,7 +79,7 @@ class URL_Crawler(scrapy.Spider):
         spider.logger.info('Crawling, Terminado')
 
     def spider_opened(self, spider):
-        spider.logger.info('Crawling, Iniciando')
+        spider.logger.info('Crawling, Iniciado descargando páginas: ')
         self.__bar = Bar('Crawling ', max=self.max_urls)
 
     def parse(self, response):
@@ -95,9 +94,11 @@ class URL_Crawler(scrapy.Spider):
             filtered_links = set(getDomain(link) for link in links if getDomain(link) is not None)
             self.__urls[domain] = filtered_links
             self.__bar.next()
-            self.logger.info(str(self.__bar.percent) + "%")
 
             for link in links:
+                if not len(self.__urls) < self.max_urls:
+                    break
+
                 filtered = getDomain(link)
                 if filtered not in self.__urls:
                     yield scrapy.Request(

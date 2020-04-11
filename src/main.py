@@ -3,7 +3,7 @@ import time
 import scipy
 from scipy.sparse import lil_matrix
 
-from src.algorithms.DistanceRank import DistanceRank
+from algorithms.DistanceRank import DistanceRank
 
 if __name__ == '__main__':
     inicio_carga = time.time()
