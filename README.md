@@ -1,10 +1,10 @@
 # DistanceRank
-Implementación del algoritmo Distance Rank y Scrapy Crawler
+ Implementación del algoritmo Distance Rank y Scrapy Crawler
 
 ## Instalación
-Ejecutar dentro de la carpeta del proyecto
+ Ejecutar dentro de la carpeta del proyecto
 ```
-pip install -r requirements.txt
+ pip install -r requirements.txt
 ```
 
 ## Ejecución
@@ -17,7 +17,7 @@ pip install -r requirements.txt
  
 ### 2. Ejecutar el algoritmo
 ```
-python main.py
+ python main.py
 ```
 
 
