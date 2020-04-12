@@ -8,7 +8,6 @@ import scrapy
 from progress.bar import Bar
 from scipy.sparse import lil_matrix
 from scrapy import signals
-from scrapy.extensions.closespider import CloseSpider
 
 
 def getDomain(url):
@@ -75,7 +74,7 @@ class URL_Crawler(scrapy.Spider):
         spider.logger.info('Crawling, guardando matriz')
         scipy.sparse.save_npz(self.output + '/matrix.npz', matrix.tocsr())
         spider.logger.info('Crawling, guardando fichero con las urls')
-        with open(self.output + '/urls.json', 'w') as f:
+        with open(self.output + '/urls.json', 'w', encoding='utf8') as f:
             json.dump(list(urls2int.keys()), f)
 
         spider.logger.info('Crawling, Terminado')
