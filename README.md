@@ -1,8 +1,11 @@
 # DistanceRank
  Implementación del algoritmo Distance Rank y Scrapy Crawler
-
+ ## Prerequisitos
+   Instalar [Python 3.7.4](https://www.python.org/downloads/release/python-374/)
+   
  ## Instalación
-   Ejecutar dentro de la carpeta del proyecto
+      
+   Descarga el proyecto y ejecuta dentro de la carpeta del proyecto
   ```
      pip install -r requirements.txt
   ```
