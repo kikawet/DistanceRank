@@ -8,6 +8,7 @@ import scrapy
 from progress.bar import Bar
 from scipy.sparse import lil_matrix
 from scrapy import signals
+from scrapy.extensions.closespider import CloseSpider
 
 
 def getDomain(url):
@@ -30,6 +31,7 @@ class URL_Crawler(scrapy.Spider):
     start_urls = ['http://brickset.com/sets/year-2016']
     __urls = {}
     __bar = None
+    __spider = None
 
     def __init__(self, *args, **kwargs):
         logger = logging.getLogger('scrapy')
@@ -74,34 +76,38 @@ class URL_Crawler(scrapy.Spider):
         scipy.sparse.save_npz(self.output + '/matrix.npz', matrix.tocsr())
         spider.logger.info('Crawling, guardando fichero con las urls')
         with open(self.output + '/urls.json', 'w') as f:
-            json.dump(urls2int, f)
+            json.dump(list(urls2int.keys()), f)
 
         spider.logger.info('Crawling, Terminado')
 
     def spider_opened(self, spider):
         spider.logger.info('Crawling, Iniciado descargando páginas: ')
         self.__bar = Bar('Crawling ', max=self.max_urls)
+        self.__spider = spider
 
     def parse(self, response):
         PAGE_SELECTOR = "//a/@href"
         URL_SELECTOR = r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
         domain = getDomain(response.url)
-        if len(self.__urls) < self.max_urls and domain not in self.__urls:
+        if len(self.__urls) < self.max_urls:
+            if domain not in self.__urls:
 
-            # Al crear un set nos aseguramos que cada link solo aparece una vez
-            links = set(response.xpath(PAGE_SELECTOR).re(URL_SELECTOR))
+                # Al crear un set nos aseguramos que cada link solo aparece una vez
+                links = set(response.xpath(PAGE_SELECTOR).re(URL_SELECTOR))
 
-            filtered_links = set(getDomain(link) for link in links if getDomain(link) is not None)
-            self.__urls[domain] = filtered_links
-            self.__bar.next()
+                filtered_links = set(getDomain(link) for link in links if getDomain(link) is not None)
+                self.__urls[domain] = filtered_links
+                self.__bar.next()
 
-            for link in links:
-                if not len(self.__urls) < self.max_urls:
-                    break
+                for link in links:
+                    if not len(self.__urls) < self.max_urls:
+                        self.__spider.crawler.engine.close_spider(self, reason='finished')
 
-                filtered = getDomain(link)
-                if filtered not in self.__urls:
-                    yield scrapy.Request(
-                        url=link,
-                        callback=self.parse
-                    )
+                    filtered = getDomain(link)
+                    if filtered not in self.__urls:
+                        yield scrapy.Request(
+                            url=link,
+                            callback=self.parse
+                        )
+        else:
+            self.__spider.crawler.engine.close_spider(self, reason='finished')

@@ -1,9 +1,11 @@
 import time
+from idlelib.iomenu import encoding
 
 import scipy
 from scipy.sparse import lil_matrix
 
 from algorithms.DistanceRank import DistanceRank
+import json
 
 if __name__ == '__main__':
     inicio_carga = time.time()
@@ -27,5 +29,9 @@ if __name__ == '__main__':
     print('tiempo preprocesamiento: ', inicio_calculo - fin_carga)
     print('tiempo calculo: ', fin_calculo - inicio_calculo)
 
-    # print(collections.Counter(v))
-    print(v[0:100])
+    with open('../urls.json', 'r') as f:
+        urls = json.load(f, encoding='utf8')
+
+    ranking = sorted(zip(urls, v), key=lambda x: x[1], reverse=True)
+
+    print(ranking[:100])
