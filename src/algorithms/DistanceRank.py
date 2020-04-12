@@ -25,8 +25,8 @@ class DistanceRank:
             itr = itr + 1
             Dn1 = np.copy(Dn)
             for j in range(size):
-                Dn[j] = (1 - alpha) * Dn1[j] + alpha * (min([gamma * Dn1[i] + log(self.__O[i]) for i in B(j)])
-                                                        if len(B(j)) != 0 else log(size))
+                Dn[j] = (1 - alpha) * Dn1[j] + alpha * (min(gamma * Dn1[i] + log(self.__O[i]) for i in B(j))
+                                                        if self.__O[j] != 0 else log(size))
             delta = np.linalg.norm(Dn1 - Dn)
 
         Xmin = min(Dn)

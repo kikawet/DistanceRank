@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     inicio_calculo = time.time()
     v = dRank.calculateRank()
-    #
+
     fin_calculo = time.time()
 
     print('tiempo carga: ', fin_carga - inicio_carga)
